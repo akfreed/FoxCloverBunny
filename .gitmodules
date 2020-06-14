@@ -1,0 +1,6 @@
+[submodule "third-party/eigen"]
+	path = third-party/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+[submodule "third-party/PerformanceTimer"]
+	path = third-party/PerformanceTimer
+	url = https://github.com/akfreed/PerformanceTimer.git
