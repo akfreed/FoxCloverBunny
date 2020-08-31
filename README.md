@@ -60,6 +60,14 @@ The entire population is replaced with children. (However, there is a chance tha
 
       `Globals`, `GameObject` (base class), `Fox`, `Clover`, `Bunny`
 
+    * database/
+
+      **FcbDatabase**
+
+      Encapsulates all database functionality.
+
+      `Database`
+
     * exec/
 
       **FcbExec**
@@ -130,7 +138,7 @@ You can also rework *FcbExec* so it's driven by *GuiFltk* via update calls, as i
 
 # Setup, Build, and Run
 
-### Step 1/3: FLTK
+### Step 1/4: FLTK
 
 Fox Clover Bunny is based in part on the work of the FLTK project (http://www.fltk.org).
 
@@ -154,7 +162,7 @@ If the pre-built binaries don't work, you can easily build FLTK yourself.
 6. `mkdir build`
 7. `cd build`
 8. Decide if you want to install to Program Files or not. It can easily be "uninstalled" from Program Files by deleting the FLTK folder, so I recommend the default location. However, if you don't want to pollute your Program Files with things that don't have an automatic uninstaller, you can install to a custom location, such as the FLTK build directory.
-9. `cmake ..` and if you don't want to install to Program Files, add `-DCMAKE_INSTALL_PREFIX=install`
+9. `cmake -G "Visual Studio 15 2017 Win64" ..` and if you don't want to install to Program Files, add `-DCMAKE_INSTALL_PREFIX=install`
     Tip: Watch out for a message that says "The following three headers should all be found!"
 10. Open the generated solution.
 11. Set the configuration to Debug. Build everything. If there are any errors, build again.
@@ -174,18 +182,32 @@ Together: `sudo apt install libgl1-mesa-dev libfltk1.3-dev`
 
 Now scoff at the Windows users who had to build FLTK.
 
-### Step 2/3: CMake
+### Step 2/4: SQLite3
+
+Fox Clover Bunny uses a SQLite3 database to record the population every generation. The FcbDatabase subproject is a dependency of FcbExec and is dependent on FcbCore. The SQLite3 C code is public domain. Fox Clover Bunny uses [SqliteModernCpp](https://github.com/SqliteModernCpp/sqlite_modern_cpp), an open-source C++ wrapper for SQLite3.
+
+SqliteModernCpp is header-only, but SQLite3 is not.
+
+##### Visual Studio
+
+I have included a 64-bit SQLite3 DLL. CMake should use this automatically if you don't have SQLite3 installed.
+
+##### Ubuntu
+
+`sudo apt install sqlite3 libsqlite3-dev`
+
+### Step 3/4: CMake
 
 1. `git clone --recursive https://github.com/akfreed/FoxCloverBunny.git`
    Tip: If you forget the `--recursive` you can do a `git submodule update --init --recursive` any time.
 2. `cd FoxCloverBunny`
 3. `mkdir build`
 4. `cd build`
-5. `cmake ..` On Linux, add `-DCMAKE_BUILD_TYPE=Release`. On Windows, if you both built your own FLTK **and** installed to a custom location, also add `-DCMAKE_PREFIX_PATH=_____` here.
+5. `cmake ..` On Linux, add `-DCMAKE_BUILD_TYPE=Release`. On Windows, if you both built your own FLTK **and** installed to a custom location, also add `-DCMAKE_PREFIX_PATH=_____` here. In this case, watch out for "Could NOT find FLTK. Trying pre-built binaries".
 
 ##### Tips for Visual Studio
 
-Tip: If you're using VS 2017, which configures for 32-bit by default, the pre-built binaries won't work, as I built them for 64-bit. Add this to your `cmake .. ` command: `-G Visual Studio 15 2017 Win64` . Of course, if you built the binaries yourself, it doesn't matter, as long as you build Fox Clover Bunny the same. 64-bit is recommended, but not necessary at this time, as the process doesn't use a lot of memory.
+If you're using VS 2017, which configures for 32-bit by default, the pre-built binaries won't work, as I built them for 64-bit. Add this to your `cmake .. ` command: `-G Visual Studio 15 2017 Win64` .
 
 ##### Tips for Linux
 
@@ -199,7 +221,7 @@ Eigen is the math library used for matrix multiplications. It runs really slowly
 
 Besides `Debug` and `Release`, there's also a `RelWithDebInfo` option that is mostly intended for profiling, but can be useful if you want to run at full speed while retaining some (albeit minimal) debug capabilities. Note that the code flow will jump around unexpectedly if you debug in this configuration due to optimizations.
 
-### Step 3/3: Build and Run
+### Step 4/4: Build and Run
 
 If there are any issues with the libraries, they will likely appear as linker errors during the build step. If you make a fix, it's best to delete the `build` folder and retry everything with a fresh CMake run.
 
@@ -237,7 +259,6 @@ Fox Clover Bunny release-0.7
 * Build FLTK DLLs instead of static libraries, so there is less pain in the setup.
 * Make the number of hidden layers configurable.
 * Read hyperparameters from a config file or command line arguments.
-* Save / load weights.
 * Statistics and analysis of GA.
 
 

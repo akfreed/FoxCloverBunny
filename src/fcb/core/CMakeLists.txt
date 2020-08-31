@@ -19,6 +19,7 @@ target_include_directories(FcbCore
 
 target_link_libraries(FcbCore PUBLIC
     ML
+    Util
 )
 
 target_compile_options(FcbCore PRIVATE ${FCB_WARNING_FLAGS})

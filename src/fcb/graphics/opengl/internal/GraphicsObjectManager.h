@@ -19,11 +19,11 @@
 #pragma once
 
 #include "graphics/ObjectRegistry.h"
-#include "ModelBunny.h"
-#include "ModelClover.h"
-#include "ModelFox.h"
+#include "Model.h"
+#include "CompareModel.h"
 
-#include <vector>
+#include <set>
+#include <memory>
 
 namespace fcb { namespace graphics {
 
@@ -32,20 +32,19 @@ class GraphicsObjectManager
 {
 public:
     bool RegisterObject(GameObjectPointer gameObject);
+    bool UnregisterObject(GameObjectPointer const& gameObject);
 
-    friend class Attorney;
     class Attorney
     {
         friend class World;
         static void Draw(GraphicsObjectManager& instance) { instance.draw(); }
     };
+
 private:
     //! Should only be called when OpenGL is ready to draw.
     void draw();
 
-    std::vector<ModelClover> m_clovers;
-    std::vector<ModelBunny>  m_bunnies;
-    std::vector<ModelFox>    m_foxes;
+    std::set<std::unique_ptr<Model>, CompareModel> m_models;
 };
 
 } }

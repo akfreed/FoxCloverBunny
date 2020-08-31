@@ -31,12 +31,17 @@ class Bunny : public GameObject
 public:
     Bunny();
 
+    fcb::ml::NeuralNet::WeightsCollection const& Weights() const;
+    fcb::ml::NeuralNet::WeightsCollection& Weights();
     unsigned  NumCloversEaten() const;
     unsigned& NumCloversEaten();
     void Think(Clover const& nearestClover);
     void Act();
+    int Score() const;
 
     static void Crossover(Bunny const& m, Bunny const& f, Bunny& out_c);
+
+    uint64_t m_uuid = 0;  // Only used externally. Set and used by the database.
 
 private:
     unsigned m_numCloversEaten = 0;

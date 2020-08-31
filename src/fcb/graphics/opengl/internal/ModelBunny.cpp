@@ -29,10 +29,17 @@ namespace fcb { namespace graphics {
 
 //! Constructor.
 //! @param[in] gameObject A weak pointer to a bunny game object. The weak pointer is stored for the lifetime of this object.
-ModelBunny::ModelBunny(std::weak_ptr<Bunny> gameObject)
+ModelBunny::ModelBunny(std::weak_ptr<Bunny const> gameObject)
     : m_gameObject(std::move(gameObject))
 { }
 
+//! @return The linked game object that this model draws.
+std::weak_ptr<fcb::core::GameObject const> ModelBunny::GetGameObject() const
+{
+    return m_gameObject;
+}
+
+//! Draw the object if the referenced object still exists.
 //! @return True if the referenced game object still exists.
 //!         False if the referenced game object has been destroyed, in which case this object should be destroyed as well.
 bool ModelBunny::DrawIfValid() const

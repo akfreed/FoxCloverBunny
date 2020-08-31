@@ -30,9 +30,9 @@ namespace fcb { namespace core {
 namespace fcb { namespace graphics {
 
 using GameObjectPointer = std::variant<
-    std::weak_ptr<fcb::core::Clover>,
-    std::weak_ptr<fcb::core::Bunny>,
-    std::weak_ptr<fcb::core::Fox>>;
+    std::weak_ptr<fcb::core::Clover const>,
+    std::weak_ptr<fcb::core::Bunny const>,
+    std::weak_ptr<fcb::core::Fox> const>;
 
 //! Give a weak object reference to the graphics system.
 //! The graphics system will draw all the objects given as long as the reference remains valid.
@@ -40,5 +40,15 @@ using GameObjectPointer = std::variant<
 //! @param[in] gameObject A weak pointer to a game object to be drawn.
 //! @return True if successful.
 bool RegisterObject(GameObjectPointer gameObject);
+
+//! Find and remove a weak object reference from the graphics system.
+//! The object will no longer be drawn.
+//! Call this if the object still exists, but you don't want it to be drawn anymore.
+//! Calling this after an object is destroyed is not strictly necessary because an item is automatically removed if 
+//! its reference is invalid when drawing is attempted. However, it can help amortize a noticable workload if drawing
+//! has not occured in a while, and many objects have been registered and subsequently destroyed in the meantime.
+//! @param[in] gameObject A weak pointer to a game object to be removed from the draw list.
+//! @return True if successful.
+bool UnregisterObject(GameObjectPointer const& gameObject);
 
 } }

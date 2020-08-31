@@ -18,6 +18,16 @@
 
 #include "GraphicsObjectManager.h"
 
+#include "ModelBunny.h"
+#include "ModelClover.h"
+#include "ModelFox.h"
+#include "core/Bunny.h"
+#include "core/Clover.h"
+#include "core/Fox.h"
+#include "util/Util.h"
+
+#include <vector>
+
 using namespace fcb::core;
 
 namespace fcb { namespace graphics {
@@ -28,51 +38,59 @@ namespace {
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...)->overloaded<Ts...>;  // Not needed after C++20.
 
-//! Draw the models in the given collection. The collection should be a std::vector.
-//! Removes the models from the collection if their associated game objects have been destroyed.
-//! @param[in/out] collection A std::vector of ModelClover, ModelBunny, or ModelFox.
-template <typename Model>
-void drawGroup(std::vector<Model>& collection)
-{
-    // A vector to hold const_iterators of another vector.
-    std::vector<typename std::vector<Model>::const_iterator> invalidIndexes;
-
-    for (auto iter = collection.cbegin(); iter != collection.cend(); ++iter)
-    {
-        bool const result = iter->DrawIfValid();
-        if (!result)
-            invalidIndexes.push_back(iter);
-    }
-
-    // Remove invalidated weak pointers. Erase in reverse so the iterators aren't invalidated.
-    for (auto iterIter = invalidIndexes.crbegin(); iterIter != invalidIndexes.crend(); ++iterIter)
-        collection.erase(*iterIter);
-}
-
 }  // Anonymous namespace.
 
 
 //! Saves a weak reference to a game object.
 //! @param[in] gameObject A weak pointer to a Fox, Clover, or Bunny.
-//! @return True if successful.
+//! @return True if successful, false if the object is already registered.
 bool GraphicsObjectManager::RegisterObject(GameObjectPointer gameObject)
 {
-    std::visit(overloaded{
-        [this](std::weak_ptr<Clover> clover) { m_clovers.emplace_back(std::move(clover)); },
-        [this](std::weak_ptr<Bunny>  bunny)  { m_bunnies.emplace_back(std::move(bunny)); },
-        [this](std::weak_ptr<Fox>    fox)    {   m_foxes.emplace_back(std::move(fox)); },
-    }, gameObject);
+    auto result = std::visit(overloaded{
+        [this](std::weak_ptr<Clover const>&& clover) { return m_models.insert(std::make_unique<ModelClover>(std::move(clover))); },
+        [this](std::weak_ptr<Bunny const>&&  bunny)  { return m_models.insert(std::make_unique<ModelBunny> (std::move(bunny)));  },
+        [this](std::weak_ptr<Fox const>&&    fox)    { return m_models.insert(std::make_unique<ModelFox>   (std::move(fox)));    },
+    }, std::move(gameObject));
 
-    return true;
+    return result.second;
+}
+
+//! Removes the saved weak reference to a game object.
+//! @param[in] gameObject A weak pointer to a Fox, Clover, or Bunny.
+//! @return True if successful, false if the object was not already registered.
+bool GraphicsObjectManager::UnregisterObject(GameObjectPointer const& gameObject)
+{
+    return std::visit([this](auto const& obj) {
+        auto const iter = m_models.find(obj);
+        if (iter == m_models.cend())
+            return false;
+        m_models.erase(iter);
+        return true;
+    }, gameObject);
 }
 
 //! Should only be called when OpenGL is ready to draw.
-//! Draws the objects. If an object is invalid, it is removed from the collection.
+//! Draws all the models.
+//! Removes the models from the collection if their associated game objects have been destroyed.
 void GraphicsObjectManager::draw()
 {
-    drawGroup(m_clovers);
-    drawGroup(m_bunnies);
-    drawGroup(m_foxes);
+    // A vector to hold const_iterators of another collection.
+    std::vector<typename decltype(m_models)::const_iterator> invalidIndexes;
+
+    for (auto iter = m_models.cbegin(); iter != m_models.cend(); ++iter)
+    {
+        bool const result = (*iter)->DrawIfValid();
+        if (!result)
+            invalidIndexes.push_back(iter);
+    }
+
+    // Remove invalidated weak pointers.
+    auto const startSize = m_models.size();
+    UNUSED(startSize);
+    for (auto const& iter : invalidIndexes)
+        m_models.erase(iter);
+    // Make sure all elements were removed.
+    assert(startSize - invalidIndexes.size() == m_models.size());
 }
 
 

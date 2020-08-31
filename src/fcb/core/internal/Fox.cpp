@@ -71,6 +71,12 @@ void Fox::Act()
     this->MoveForward(speed);
 }
 
+//! @return The calculated value representing fitness.
+int Fox::Score() const
+{
+    return m_numBunniesEaten;
+}
+
 //! Perform gene crossover. Combine m and f and output offspring genes.
 //! @param[in]  m     A fox.
 //! @param[in]  f     A fox. Can be the same as m.

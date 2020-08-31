@@ -18,9 +18,7 @@
 
 #pragma once
 
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <memory>
+#include "Model.h"
 
 namespace fcb { namespace core {
     class Fox;
@@ -29,15 +27,18 @@ namespace fcb { namespace core {
 namespace fcb { namespace graphics {
 
 //! The model for a cute fox.
-class ModelFox
+class ModelFox : public Model
 {
 public:
-    explicit ModelFox(std::weak_ptr<fcb::core::Fox> gameObject);
+    explicit ModelFox(std::weak_ptr<fcb::core::Fox const> gameObject);
+    ~ModelFox() override = default;
 
-    bool DrawIfValid() const;
+    std::weak_ptr<fcb::core::GameObject const> GetGameObject() const override;
+
+    bool DrawIfValid() const override;
 
 private:
-    std::weak_ptr<fcb::core::Fox> m_gameObject;
+    std::weak_ptr<fcb::core::Fox const> m_gameObject;
 };
 
 } }

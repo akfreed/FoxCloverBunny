@@ -29,10 +29,17 @@ namespace fcb { namespace graphics {
 
 //! Constructor.
 //! @param[in] gameObject A weak pointer to a clover game object. The weak pointer is stored for the lifetime of this object.
-ModelClover::ModelClover(std::weak_ptr<Clover> gameObject)
+ModelClover::ModelClover(std::weak_ptr<Clover const> gameObject)
     : m_gameObject(std::move(gameObject))
 { }
 
+//! @return The linked game object that this model draws.
+std::weak_ptr<fcb::core::GameObject const> ModelClover::GetGameObject() const
+{
+    return m_gameObject;
+}
+
+//! Draw the object if the referenced object still exists.
 //! @return True if the referenced game object still exists.
 //!         False if the referenced game object has been destroyed, in which case this object should be destroyed as well.
 bool ModelClover::DrawIfValid() const

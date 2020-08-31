@@ -35,8 +35,11 @@ public:
     unsigned& NumBunniesEaten();
     void Think(Bunny const& nearestBunny);
     void Act();
+    int Score() const;
 
     static void Crossover(Fox const& m, Fox const& f, Fox& out_c);
+
+    uint64_t m_uuid = 0;  // Only used externally. Set and used by the database.
 
 private:
     unsigned m_numBunniesEaten = 0;

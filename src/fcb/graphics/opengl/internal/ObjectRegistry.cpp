@@ -25,7 +25,12 @@ namespace fcb { namespace graphics {
 
 bool RegisterObject(GameObjectPointer gameObject)
 {
-    return World::Get().GetGraphicsObjectManager().RegisterObject(gameObject);
+    return World::Get().GetGraphicsObjectManager().RegisterObject(std::move(gameObject));
+}
+
+bool UnregisterObject(GameObjectPointer const& gameObject)
+{
+    return World::Get().GetGraphicsObjectManager().UnregisterObject(gameObject);
 }
 
 

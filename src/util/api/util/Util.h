@@ -23,7 +23,7 @@
 #include <Eigen/Dense>
 
 // Global macros.
-#define UNUSED(x) ((void)x);  // For development only.
+#define UNUSED(x) ((void)x);
 
 namespace fcb { namespace util {
 

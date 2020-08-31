@@ -34,6 +34,17 @@ Bunny::Bunny()
     this->Radius() = 0.02f;
 }
 
+//! @return The weights of the neural network.
+NeuralNet::WeightsCollection const& Bunny::Weights() const
+{
+    return m_brain.Weights();
+}
+//! @return The weights of the neural network.
+NeuralNet::WeightsCollection& Bunny::Weights()
+{
+    return m_brain.Weights();
+}
+
 //! @return The number of clovers this bunny has eaten.
 unsigned Bunny::NumCloversEaten() const
 {
@@ -69,6 +80,12 @@ void Bunny::Act()
 
     this->Rotate(rotateBy);
     this->MoveForward(speed);
+}
+
+//! @return The calculated value representing fitness.
+int Bunny::Score() const
+{
+    return m_numCloversEaten;
 }
 
 //! Perform gene crossover. Combine m and f and output offspring genes.

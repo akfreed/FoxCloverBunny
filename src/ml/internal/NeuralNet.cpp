@@ -127,11 +127,23 @@ NeuralNet::WeightsCollection NeuralNet::generateWeightsRandom() const
 NeuralNet::WeightsCollection NeuralNet::generateWeightsZero() const
 {
     WeightsCollection weights;
-    // dWeights for input->hidden.
+    // weights for input->hidden.
     weights[0] = WeightsType::Zero(static_cast<size_t>(NUM_INPUTS)  + 1, m_numHidden);
-    // dWeights for hidden->output.
+    // weights for hidden->output.
     weights[1] = WeightsType::Zero(static_cast<size_t>(m_numHidden) + 1, NUM_OUTPUTS);
     return weights;
+}
+
+//! @return The weights for this neural network.
+NeuralNet::WeightsCollection const& NeuralNet::Weights() const
+{
+    // The individual elements are const protected if the weights collection is an std::array.
+    return m_weights;
+}
+//! @return The weights for this neural network.
+NeuralNet::WeightsCollection& NeuralNet::Weights()
+{
+    return m_weights;
 }
 
 //! Feed the input forward and return the outputs.

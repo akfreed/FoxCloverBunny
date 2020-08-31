@@ -51,6 +51,9 @@ public:
     NeuralNet() = default;
     explicit NeuralNet(unsigned const numHidden);
 
+    WeightsCollection const& Weights() const;
+    WeightsCollection& Weights();
+
     void FeedForward(InputType const& inputs, OutputType& out_outputs) const;
     static void Crossover(NeuralNet const& m, NeuralNet const& f, NeuralNet& out_c);
 
@@ -62,7 +65,6 @@ private:
     // private data
     unsigned          m_numHidden = 6;
     WeightsCollection m_weights   = generateWeightsRandom();
-    WeightsCollection m_dWeights  = generateWeightsZero();
 };
 
 } }

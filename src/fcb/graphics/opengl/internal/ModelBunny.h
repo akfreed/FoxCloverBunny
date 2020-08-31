@@ -18,9 +18,7 @@
 
 #pragma once
 
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <memory>
+#include "Model.h"
 
 namespace fcb { namespace core {
     class Bunny;
@@ -29,15 +27,18 @@ namespace fcb { namespace core {
 namespace fcb { namespace graphics {
 
 //! The model for a cute bunny.
-class ModelBunny
+class ModelBunny : public Model
 {
 public:
-    explicit ModelBunny(std::weak_ptr<fcb::core::Bunny> gameObject);
+    explicit ModelBunny(std::weak_ptr<fcb::core::Bunny const> gameObject);
+    ~ModelBunny() override = default;
 
-    bool DrawIfValid() const;
+    std::weak_ptr<fcb::core::GameObject const> GetGameObject() const override;
+
+    bool DrawIfValid() const override;
 
 private:
-    std::weak_ptr<fcb::core::Bunny> m_gameObject;
+    std::weak_ptr<fcb::core::Bunny const> m_gameObject;
 };
 
 } }

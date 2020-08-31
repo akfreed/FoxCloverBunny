@@ -48,7 +48,7 @@ find_package(FLTK)
 if(NOT FLTK_FOUND)
     if(NOT MSVC)
         # On Ubuntu 18, install libfltk1.3-dev.
-        message(FATAL_ERROR "Could not find FLTK. Install libfltk1.3-dev")
+        message(FATAL_ERROR "Could not find FLTK. Install libfltk1.3-dev (Ubuntu).")
     else()
         # See the README if these dont't build.
         message("Trying pre-built binaries (MSVC x64).")
@@ -74,6 +74,25 @@ endif()
 # Add PerformanceTimer
 add_subdirectory(third-party/PerformanceTimer/PerformanceTimer98)
 
+# Add SQLite
+include(cmake/find-sqlite3.cmake)
+
+# Add SqliteModernCpp
+add_library(SqliteModernCpp INTERFACE)
+target_include_directories(SqliteModernCpp SYSTEM INTERFACE
+    ${CMAKE_SOURCE_DIR}/third-party/sqlite_modern_cpp/hdr
+)
+target_link_libraries(SqliteModernCpp INTERFACE
+    Sqlite3
+)
+if(MSVC)
+    target_compile_options(SqliteModernCpp INTERFACE
+        /experimental:external
+        /external:I ${CMAKE_SOURCE_DIR}/third-party/sqlite_modern_cpp/hdr
+        /external:W0)
+endif()
+
+
 # -------------------------------------------------------------------
 # Projects
 
@@ -84,5 +103,5 @@ add_subdirectory(src/gui/fltk)
 
 # -------------------------------------------------------------------
 
-# Set Main as the start-up project
+# Set FcbExec as the start-up project
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT FcbExec)

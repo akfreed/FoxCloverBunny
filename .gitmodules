@@ -4,3 +4,6 @@
 [submodule "third-party/PerformanceTimer"]
 	path = third-party/PerformanceTimer
 	url = https://github.com/akfreed/PerformanceTimer.git
+[submodule "third-party/sqlite_modern_cpp"]
+	path = third-party/sqlite_modern_cpp
+	url = https://github.com/SqliteModernCpp/sqlite_modern_cpp.git
